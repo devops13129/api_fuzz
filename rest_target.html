@@ -1,0 +1,129 @@
+<html>
+	<head>
+		<title>Example Flask Rest Target</title>
+	</head>
+	<body>
+		<script>
+			
+			function get_users()
+			{
+				var xhr = new XMLHttpRequest();
+				xhr.open("GET", window.location.origin+"/api/users", false);
+				xhr.setRequestHeader("Authorization", "Token b5638ae7-6e77-4585-b035-7d9de2e3f6b3");
+				xhr.send();
+				
+				console.log(xhr.status);
+				console.log(xhr.statusText);
+			}
+			
+			function get_user(id)
+			{
+				var xhr = new XMLHttpRequest();
+				xhr.open("GET", window.location.origin+"/api/users/" + id, false);
+				xhr.setRequestHeader("Authorization", "Token b5638ae7-6e77-4585-b035-7d9de2e3f6b3");
+				xhr.send();
+				
+				console.log(xhr.status);
+				console.log(xhr.statusText);
+			}
+			
+			function delete_user(id)
+			{
+				var xhr = new XMLHttpRequest();
+				xhr.open("DELETE", window.location.origin+"/api/users/" + id, false);
+				xhr.setRequestHeader("Authorization", "Token b5638ae7-6e77-4585-b035-7d9de2e3f6b3");
+				xhr.send();
+				
+				console.log(xhr.status);
+				console.log(xhr.statusText);
+			}
+			
+			function delete_user_by_name(name)
+			{
+				var xhr = new XMLHttpRequest();
+				xhr.open("DELETE", window.location.origin+"/api/users?user=" + name, false);
+				xhr.setRequestHeader("Authorization", "Token b5638ae7-6e77-4585-b035-7d9de2e3f6b3");
+				xhr.send();
+				
+				console.log(xhr.status);
+				console.log(xhr.statusText);
+			}
+			
+			function create_user()
+			{
+				var data = {"user":"dd", "first":"mike", "last":"smith", "password":"hello"};
+
+				var xhr = new XMLHttpRequest();
+				xhr.open("POST", window.location.origin+"/api/users", false);
+				xhr.setRequestHeader('Content-Type', 'application/json; charset=UTF-8');
+				xhr.setRequestHeader("Authorization", "Token b5638ae7-6e77-4585-b035-7d9de2e3f6b3");
+				xhr.send(JSON.stringify(data));
+				r = JSON.parse(xhr.responseText);
+				
+				console.log(xhr.status);
+				console.log(xhr.statusText);
+				
+				return r.user_id;
+			}
+			
+			function update_user(id)
+			{
+				var data = {"user":"dd", "first":"john", "last":"smith", "password":"hello"};
+
+				var xhr = new XMLHttpRequest();
+				xhr.open("PUT", window.location.origin+"/api/users/"+id, false);
+				xhr.setRequestHeader('Content-Type', 'application/json; charset=UTF-8');
+				xhr.setRequestHeader("Authorization", "Token b5638ae7-6e77-4585-b035-7d9de2e3f6b3");
+				xhr.send(JSON.stringify(data));
+				
+				console.log(xhr.status);
+				console.log(xhr.statusText);
+			}
+
+			function do_get_users()
+			{
+				get_users();
+			}
+			
+			function do_create_user()
+			{
+				id = create_user();
+				get_user(id);
+				delete_user(id);
+			}
+			
+			function do_update_user()
+			{
+				id = create_user();
+				update_user(id);
+				get_user(id);
+				delete_user(id);
+			}
+			
+			function do_setup()
+			{
+				delete_user_by_name('dd');
+			}
+			
+			function do_teardown()
+			{
+				delete_user_by_name('dd');
+			}
+			
+		</script>
+		
+
+		<h3>Welcome to the ACME Corporations website!</h3>
+
+		<p style="width: 50%">This website is written using a Python + Flask + SQLite stack. This
+			HTML page calls various REST API services to perform actions. It's
+			perfect to use as a sample target for Peach API Security.</p>
+		
+		<button onclick="do_setup();">Test Setup</button>
+		<button onclick="do_get_users();">Get Users</button>
+		<button onclick="do_create_user();">Create User</button>
+		<button onclick="do_update_user();">Update User</button>
+		<button onclick="do_teardown();">Test Teardown</button>
+		
+	</body>
+</html>

@@ -1,0 +1,48 @@
+
+include:
+    - template: API-Fuzzing.gitlab-ci.yml
+
+stages:
+    - build
+    - fuzz
+            
+variables:
+    #
+    # --] Required Configuration ------------------------------------
+    #
+    # Test using a HAR file checked into the repository, or generated during the build stage
+    FUZZAPI_HAR: test_rest_target.har
+    #
+    # Provide the base url for the target.
+    # This will override the base URL in the HAR specification
+    FUZZAPI_TARGET_URL: http://target:7777
+    #
+    # --] Optional configuration [------------------------------------
+    #
+    # FUZZAPIOVERRIDESJSON is set in the CI/CD Variables section of Settings
+    FUZZAPI_OVERRIDES_ENV: $FUZZAPIOVERRIDESJSON
+    #
+    # Docker image published here
+    HAR_TARGET_IMAGE: registry.gitlab.com/redington2/api-fuzzing-example/har-target
+
+build:
+    stage: build
+    image: docker:19.03
+    services:
+        - docker:19.03-dind
+    script:
+        #
+        # Build target container
+        - docker build -t $HAR_TARGET_IMAGE .
+        #
+        # Push to registry
+        - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
+        - docker push $HAR_TARGET_IMAGE
+
+# Extend the apifuzzer_fuzz job defined in the API-Fuzzing.gitlab-ci.yml file
+apifuzzer_fuzz:
+    services:
+        - name: $HAR_TARGET_IMAGE
+          alias: target
+
+# end

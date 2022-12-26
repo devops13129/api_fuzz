@@ -1,0 +1,9 @@
+pyopenssl
+httplib2
+flask
+flask-restful
+requests>=2.18.4
+python-simplexml
+twisted
+service_identity
+flask-cors
